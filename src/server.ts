@@ -13,6 +13,7 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
   app.use(bodyParser.json());
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
+  //Done!!!
 
   app.get("/filteredimage/", async (req, res) => {
     try {
