@@ -14,9 +14,13 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
 
+  interface Image {
+    image_url: string;
+  }
+
   app.get("/filteredimage/", async (req, res) => {
     try {
-      const { image_url } = req.query;
+      const { image_url }: { image_url: Image } = req.query;
       if (!image_url) {
         return res.status(400).send("bad request!");
       }
