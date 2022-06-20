@@ -1,4 +1,6 @@
 import express from "express";
+
+import { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
@@ -15,20 +17,26 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   //Done!!!
 
-  app.get("/filteredimage/", async (req, res) => {
-    try {
-      const { image_url } = req.query;
-      if (!image_url) {
-        return res.status(400).send("bad request!");
+  app.get(
+    "/filteredimage/",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { image_url }: { image_url: string } = req.query;
+        if (!image_url) {
+          return res.status(400).send("bad request!");
+        }
+        console.log(image_url);
+        const path = await filterImageFromURL(image_url.toString());
+        res.sendFile(path);
+        res.on("finish", () => deleteLocalFiles([path]));
+      } catch (error) {
+        next(error);
+        return res
+          .status(500)
+          .send({ error: "Unable to process your request" });
       }
-      console.log(image_url);
-      const path = await filterImageFromURL(image_url.toString());
-      res.sendFile(path);
-      res.on("finish", () => deleteLocalFiles([path]));
-    } catch {
-      return res.status(500).send({ error: "Unable to process your request" });
     }
-  });
+  );
 
   /**************************************************************************** */
 
@@ -36,7 +44,7 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/", async (req, res) => {
+  app.get("/", async (req: Request, res: Response) => {
     res.send("try GET /filteredimage?image_url={{}}");
   });
 
